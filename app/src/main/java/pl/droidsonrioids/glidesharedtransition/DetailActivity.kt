@@ -6,8 +6,7 @@ import android.transition.ChangeBounds
 import android.transition.ChangeImageTransform
 import android.transition.Fade
 import android.transition.TransitionSet
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
+import android.widget.ImageView
 import kotlinx.android.synthetic.main.activity_detail.*
 
 class DetailActivity : AppCompatActivity() {
@@ -35,6 +34,7 @@ class DetailActivity : AppCompatActivity() {
 
         detailImage.maximumScale = 10f
         detailImage.setZoomable(false)
+        detailImage.scaleType = ImageView.ScaleType.CENTER_CROP
 
         val thumbnailRequest = Glide.with(this)
                 .load(thumbnailUrl(num))
