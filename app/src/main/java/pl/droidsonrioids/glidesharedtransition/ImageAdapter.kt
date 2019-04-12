@@ -5,26 +5,37 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.DownsampleStrategy
+import com.bumptech.glide.request.RequestOptions
 
-class ImageAdapter(private val images: List<String>, private val onClick: (String, View) -> Unit) : RecyclerView.Adapter<ImageAdapter.ImageViewHolder>() {
+const val NUM_IMAGES = 48
+const val IMAGES_OFFSET = 169
+fun thumbnailUrl(num: Int) = "https://picsum.photos/300/210?image=$num"
+fun fullSizeUrl(num: Int) = "https://picsum.photos/3000/2100?image=$num"
+
+class ImageAdapter(private val onClick: (Int, View) -> Unit) : RecyclerView.Adapter<ImageAdapter.ImageViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.image, parent, false)
         return ImageViewHolder(view)
     }
 
-    override fun getItemCount() = images.size
+    override fun getItemCount() = NUM_IMAGES
 
-    override fun onBindViewHolder(holder: ImageViewHolder, position: Int) = holder.bind(images[position])
+    override fun onBindViewHolder(holder: ImageViewHolder, position: Int) = holder.bind(position)
 
     inner class ImageViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        fun bind(url: String) {
+        fun bind(num: Int) {
+            val offsetNum = IMAGES_OFFSET + num
             (itemView as ImageView).apply {
-                load(url)
-                transitionName = url
-                setOnClickListener { onClick(url, it) }
+                Glide.with(this)
+                        .load(thumbnailUrl(offsetNum))
+                        .apply(RequestOptions.overrideOf(width).downsample(DownsampleStrategy.CENTER_INSIDE))
+                        .into(this)
+                transitionName = "$offsetNum"
+                setOnClickListener { onClick(offsetNum, it) }
             }
         }
     }
-
 }

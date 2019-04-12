@@ -1,14 +1,16 @@
 package pl.droidsonrioids.glidesharedtransition
 
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.app.ActivityOptionsCompat
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
 import android.view.View
+import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkManager
 import kotlinx.android.synthetic.main.activity_main.*
 
-const val IMAGE_URL_KEY = "url"
+const val IMAGE_NUM_KEY = "img_num"
 
 class MainActivity : AppCompatActivity() {
 
@@ -17,19 +19,20 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         images.apply {
             layoutManager = GridLayoutManager(context, 4)
-            adapter = ImageAdapter(photos(), ::goToDetails)
+            adapter = ImageAdapter(::goToDetails)
         }
+
+        val workRequest = OneTimeWorkRequest.Builder(ImageDownloader::class.java).build()
+        WorkManager.getInstance().enqueue(workRequest)
     }
 
-    fun goToDetails(url: String, imageView: View) {
-        val options = ActivityOptionsCompat.makeSceneTransitionAnimation(this, imageView, imageView.transitionName).toBundle()
+    private fun goToDetails(num: Int, imageView: View) {
+        val options =
+                ActivityOptionsCompat.makeSceneTransitionAnimation(this, imageView, imageView.transitionName).toBundle()
         Intent(this, DetailActivity::class.java)
-                .putExtra(IMAGE_URL_KEY, url)
+                .putExtra(IMAGE_NUM_KEY, num)
                 .let {
                     startActivity(it, options)
                 }
     }
-
-    private fun photos() = (169..216)
-            .map { "https://picsum.photos/1000/700?image=$it" }
 }
