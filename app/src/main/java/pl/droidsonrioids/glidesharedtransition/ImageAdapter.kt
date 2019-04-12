@@ -5,9 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.DownsampleStrategy
-import com.bumptech.glide.request.RequestOptions
+import com.squareup.picasso.Picasso
 
 const val NUM_IMAGES = 48
 const val IMAGES_OFFSET = 169
@@ -29,10 +27,10 @@ class ImageAdapter(private val onClick: (Int, View) -> Unit) : RecyclerView.Adap
         fun bind(num: Int) {
             val offsetNum = IMAGES_OFFSET + num
             (itemView as ImageView).apply {
-                Glide.with(this)
+                Picasso.with(context)
                         .load(thumbnailUrl(offsetNum))
-                        .apply(RequestOptions.overrideOf(width).downsample(DownsampleStrategy.CENTER_INSIDE))
                         .into(this)
+
                 transitionName = "$offsetNum"
                 setOnClickListener { onClick(offsetNum, it) }
             }

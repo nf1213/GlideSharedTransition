@@ -7,6 +7,7 @@ import android.transition.ChangeImageTransform
 import android.transition.Fade
 import android.transition.TransitionSet
 import android.widget.ImageView
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_detail.*
 
 class DetailActivity : AppCompatActivity() {
@@ -36,22 +37,18 @@ class DetailActivity : AppCompatActivity() {
         detailImage.setZoomable(false)
         detailImage.scaleType = ImageView.ScaleType.CENTER_CROP
 
-        val thumbnailRequest = Glide.with(this)
+        Picasso.with(this)
                 .load(thumbnailUrl(num))
-                .apply(RequestOptions.noTransformation().onlyRetrieveFromCache(true))
-                .listener(onResourceReady = {
+                .into(detailImage, onSuccess = {
                     supportStartPostponedEnterTransition()
-                }, onLoadFailed = {
+                    Picasso.with(this@DetailActivity)
+                            .load(fullSizeUrl(num))
+                            .placeholder(detailImage.drawable)
+                            .into(detailImage, onSuccess = {
+                                detailImage.setZoomable(true)
+                            })
+                }, onError = {
                     supportStartPostponedEnterTransition()
                 })
-
-        Glide.with(this)
-                .load(fullSizeUrl(num))
-//                .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL))
-                .thumbnail(thumbnailRequest)
-                .listener({
-                              detailImage.setZoomable(true)
-                          })
-                .into(detailImage)
     }
 }
