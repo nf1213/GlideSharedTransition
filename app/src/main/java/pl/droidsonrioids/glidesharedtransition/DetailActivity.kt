@@ -7,6 +7,8 @@ import android.transition.ChangeImageTransform
 import android.transition.Fade
 import android.transition.TransitionSet
 import android.widget.ImageView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import kotlinx.android.synthetic.main.activity_detail.*
 
 class DetailActivity : AppCompatActivity() {
